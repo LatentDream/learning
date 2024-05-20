@@ -1,3 +1,38 @@
+board = new Array(32);
+
+function initBoard() {
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 4; j++) {
+            board[i * 4 + j] = " ";
+        }
+    }
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 4; j++) {
+            if ((i + j) % 2 == 1) {
+                board[i * 4 + j] = "b";
+            }
+        }
+    }
+    for (let i = 5; i < 8; i++) {
+        for (let j = 0; j < 4; j++) {
+            if ((i + j) % 2 == 1) {
+                board[i * 4 + j] = "w";
+            }
+        }
+    }
+}
+
+function printBoard() {
+    let boardStr = "";
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 4; j++) {
+            boardStr += board[i * 4 + j] + " ";
+        }
+        boardStr += "\n";
+    }
+    console.log(boardStr);
+}
+
 fetch("./checkers.wasm").then(response =>
     response.arrayBuffer()
 ).then(bytes =>
@@ -5,9 +40,14 @@ fetch("./checkers.wasm").then(response =>
         events: {
             piecemoved: (fromx, fromy, tox, toy) => {
                 console.log(`Piece moved from ${fromx},${fromy} to ${tox},${toy}`);
+                board[toy * 4 + tox] = board[fromy * 4 + fromx];
+                board[fromy * 4 + fromx] = " ";
+                printBoard();
             },
             piececrowned: (x, y) => {
                 console.log(`Piece crowned at ${x},${y}`);
+                board[y * 4 + x] = board[y * 4 + x].toUpperCase();
+                printBoard();
             }
         },
     }
@@ -15,6 +55,7 @@ fetch("./checkers.wasm").then(response =>
     instance = results.instance;
 
     instance.exports.initBoard();
+    initBoard();
     console.log("At Start, Turn owner is" + instance.exports.getTurnOwner());
 
     instance.exports.move(0, 5, 0, 4); // B

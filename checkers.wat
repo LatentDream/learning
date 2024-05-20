@@ -263,10 +263,10 @@
       (call $toggleTurnOwner)
       (call $setPiece (local.get $toX) (local.get $toY) (local.get $curpiece))
       (call $setPiece (local.get $fromX) (local.get $fromY) (i32.const 0))
+      (call $notify_piecemoved  (local.get $fromX) (local.get $fromY) (local.get $toX) (local.get $toY))
       (if (call $shouldCrown (local.get $toY) (local.get $curpiece))
         (then (call $crownPiece (local.get $toX) (local.get $toY)))
       )
-      (call $notify_piecemoved  (local.get $fromX) (local.get $fromY) (local.get $toX) (local.get $toY))
       (i32.const 1)
     )
 
