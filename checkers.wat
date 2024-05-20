@@ -5,8 +5,8 @@
 (module
 
   ;; Import -------------------------------------------------------------------
-  (; (import "events" "piecemoved" ;)
-  (;         (func $notify_piecemoved (param $fromX i32) (param $fromY i32) (param $toX i32) (param $toY i32))) ;)
+  (import "events" "piecemoved"
+          (func $notify_piecemoved (param $fromX i32) (param $fromY i32) (param $toX i32) (param $toY i32)))
 
   (import "events" "piececrowned"
           (func $notify_piececrowned (param $pieceX i32) (param $pieceY i32)))
@@ -266,11 +266,53 @@
       (if (call $shouldCrown (local.get $toY) (local.get $curpiece))
         (then (call $crownPiece (local.get $toX) (local.get $toY)))
       )
-      (call $notify_piecemoved  (local.get $fromX i32) (local.get $fromY i32) (local.get $toX i32) (local.get $toY i32))
+      (call $notify_piecemoved  (local.get $fromX) (local.get $fromY) (local.get $toX) (local.get $toY))
       (i32.const 1)
     )
 
 
+  ;; Init the board -----------------------------------------------------------
+
+    (func $initBoard
+      ;; White
+      (call $setPiece (i32.const 1) (i32.const 0) (i32.const 2))
+      (call $setPiece (i32.const 3) (i32.const 0) (i32.const 2))
+      (call $setPiece (i32.const 5) (i32.const 0) (i32.const 2))
+      (call $setPiece (i32.const 7) (i32.const 0) (i32.const 2))
+      (call $setPiece (i32.const 0) (i32.const 1) (i32.const 2))
+      (call $setPiece (i32.const 2) (i32.const 1) (i32.const 2))
+      (call $setPiece (i32.const 4) (i32.const 1) (i32.const 2))
+      (call $setPiece (i32.const 6) (i32.const 1) (i32.const 2))
+      (call $setPiece (i32.const 1) (i32.const 2) (i32.const 2))
+      (call $setPiece (i32.const 3) (i32.const 2) (i32.const 2))
+      (call $setPiece (i32.const 5) (i32.const 2) (i32.const 2))
+      (call $setPiece (i32.const 7) (i32.const 2) (i32.const 2))
+      ;; Black
+      (call $setPiece (i32.const 0) (i32.const 5) (i32.const 1))
+      (call $setPiece (i32.const 2) (i32.const 5) (i32.const 1))
+      (call $setPiece (i32.const 4) (i32.const 5) (i32.const 1))
+      (call $setPiece (i32.const 6) (i32.const 5) (i32.const 2))
+      (call $setPiece (i32.const 1) (i32.const 5) (i32.const 1))
+      (call $setPiece (i32.const 3) (i32.const 6) (i32.const 1))
+      (call $setPiece (i32.const 5) (i32.const 6) (i32.const 1))
+      (call $setPiece (i32.const 7) (i32.const 6) (i32.const 1))
+      (call $setPiece (i32.const 0) (i32.const 7) (i32.const 1))
+      (call $setPiece (i32.const 2) (i32.const 7) (i32.const 1))
+      (call $setPiece (i32.const 4) (i32.const 7) (i32.const 1))
+      (call $setPiece (i32.const 6) (i32.const 7) (i32.const 2))
+
+      ;; Black goes first
+      (call $setTurnOwner (i32.const 1))
+    )
+
+  ;; Export Function ----------------------------------------------------------
+  ;; Just expose some "public" api for the host to call, the rest is internal
+  (export "getPiece"     (func $getPiece))
+  (export "isCrowned"    (func $isCrowned))
+  (export "initBoard"    (func $initBoard))
+  (export "getTurnOwner" (func $getTurnOwner))
+  (export "move"         (func $move))
+  (export "memory"       (memory $mem))
 
 )
 
