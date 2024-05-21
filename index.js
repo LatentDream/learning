@@ -1,35 +1,38 @@
-board = new Array(32);
+board = new Array(64);
 
 function initBoard() {
     for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 4; j++) {
-            board[i * 4 + j] = " ";
+        for (let j = 0; j < 8; j++) {
+            board[i * 8 + j] = " ";
         }
     }
     for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < 8; j++) {
             if ((i + j) % 2 == 1) {
-                board[i * 4 + j] = "b";
+                board[i * 8 + j] = "b";
             }
         }
     }
     for (let i = 5; i < 8; i++) {
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < 8; j++) {
             if ((i + j) % 2 == 1) {
-                board[i * 4 + j] = "w";
+                board[i * 8 + j] = "w";
             }
         }
     }
 }
 
 function printBoard() {
-    let boardStr = "";
+    let boardStr = "  _________________\n";
     for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 4; j++) {
-            boardStr += board[i * 4 + j] + " ";
+        boardStr += i + `| `;
+        for (let j = 0; j < 8; j++) {
+            boardStr += board[i * 8 + j] + " ";
         }
-        boardStr += "\n";
+        boardStr += "|\n";
     }
+    boardStr += "  -----------------\n";
+    boardStr += "   0 1 2 3 4 5 6 7\n";
     console.log(boardStr);
 }
 
@@ -40,15 +43,15 @@ fetch("./checkers.wasm").then(response =>
         events: {
             piecemoved: (fromx, fromy, tox, toy) => {
                 console.log(`Piece moved from ${fromx},${fromy} to ${tox},${toy}`);
-                board[toy * 4 + tox] = board[fromy * 4 + fromx];
-                board[fromy * 4 + fromx] = " ";
+                board[toy * 8 + tox] = board[fromy * 8 + fromx];
+                board[fromy * 8 + fromx] = " ";
                 printBoard();
             },
             piececrowned: (x, y) => {
                 console.log(`Piece crowned at ${x},${y}`);
-                board[y * 4 + x] = board[y * 4 + x].toUpperCase();
+                board[y * 8 + x] = board[y * 8 + x].toUpperCase();
                 printBoard();
-            }
+            },
         },
     }
 )).then(results => {
@@ -70,6 +73,8 @@ fetch("./checkers.wasm").then(response =>
     let res = instance.exports.move(0, 0, 0, 2);
 
     document.getElementById("container").innerText = res;
-    console.log("After moving, Turn owner is" + instance.exports.getTurnOwner());
+    console.log("After moving, Turn owner is: " + instance.exports.getTurnOwner());
+    console.log("instance.exports.move(x, y, to_x, to_y)"); 
+
 
 }).catch(console.error);

@@ -11,6 +11,9 @@
   (import "events" "piececrowned"
           (func $notify_piececrowned (param $pieceX i32) (param $pieceY i32)))
 
+  (import "events" "pieceremoved"
+          (func $notify_pieceremoved (param $pieceX i32) (param $pieceY i32)))
+
   ;; Memomy -------------------------------------------------------------------
   (memory $mem 1)  ;; mem: must have 64KB
 
@@ -186,8 +189,6 @@
       (i32.sub (local.get $x) (local.get $y))
     )
 
-    ;; TODO jump & multi-jump
-
   ;; Player moving ------------------------------------------------------------
 
     ;; Check if a move is valid
@@ -214,6 +215,26 @@
         (else
           (i32.const 0)
         )
+      )
+    )
+
+    ;; Check if move from two (for jump)
+    (func $isMovedTwoCase (param $from i32) (param $to i32) (result i32)
+      (local $d i32)
+      (local.set $d
+        (if (result i32)
+          (i32.gt_s (local.get $to) (local.get $from))
+          (then
+            (call $distance (local.get $to) (local.get $from)) ;; No abs, order is importance
+          )
+          (else
+            (call $distance (local.get $from) (local.get $to))
+          )
+        )
+      )
+      (i32.eq
+        (local.get $d)
+        (i32.const 2)
       )
     )
 

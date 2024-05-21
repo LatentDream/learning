@@ -1,5 +1,5 @@
-# Checker written in pure WASM
-Learning WebAssembly, basic
+# Checkers written in pure WASM
+Learning WebAssembly, "Programming WebAssembly with Rust" by Kevin Hoffman
 
 ## Install the tooling:
 [Wabt](https://github.com/WebAssembly/wabt)
